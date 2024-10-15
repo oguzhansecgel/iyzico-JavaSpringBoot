@@ -24,6 +24,8 @@ public interface UserMapper {
     User updateUser(UpdateUserRequest request,@MappingTarget User user);
 
     @Mapping(target = "roleId", source = "roles", qualifiedByName = "mapRolesToRoleId")
+    @Mapping(target = "firstName", source = "firstName")
+    @Mapping(target = "lastName", source = "lastName")
     GetByIdUserResponse getByIdUserResponse(User user);
 
     @Mapping(target = "firstName", source = "firstName")

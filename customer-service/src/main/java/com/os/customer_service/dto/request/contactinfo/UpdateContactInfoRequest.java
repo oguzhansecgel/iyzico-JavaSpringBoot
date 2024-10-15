@@ -21,5 +21,6 @@ public class UpdateContactInfoRequest {
     private String address;
     private String city;
     private String country;
+    private String zipCode;
     private Long customerId;
 }

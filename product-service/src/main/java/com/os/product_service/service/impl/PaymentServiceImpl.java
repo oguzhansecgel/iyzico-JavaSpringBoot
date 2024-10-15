@@ -26,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.customerRepository = customerRepository;
     }
     @Override
-    public String makePayment(int productId, int customerId, PaymentRequest payment) {
+    public String makePayment(Long productId, Long customerId, PaymentRequest payment) {
         Product product = productRepository.findById(productId).orElse(null);
         Customer customer = customerRepository.findById(customerId).orElse(null);
 

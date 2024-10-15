@@ -18,8 +18,8 @@ public class PaymentController {
     // Ödeme işlemi başlat
     @PostMapping("/{productId}/{customerId}")
     public ResponseEntity<String> makePayment(
-            @PathVariable int productId,
-            @PathVariable int customerId,
+            @PathVariable Long productId,
+            @PathVariable Long customerId,
             @RequestBody PaymentRequest paymentRequest) {
 
         String result = paymentService.makePayment(productId, customerId,paymentRequest);

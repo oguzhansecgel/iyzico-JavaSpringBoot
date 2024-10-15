@@ -22,6 +22,7 @@ public class ContactInfo {
     private String address;
     private String city;
     private String country;
+    private String zipCode;
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private User customer;

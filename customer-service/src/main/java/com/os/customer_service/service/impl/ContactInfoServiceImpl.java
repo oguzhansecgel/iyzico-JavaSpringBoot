@@ -34,7 +34,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         contactInfo.setCustomer(customerOptional.get());
         ContactInfo savedContactInfo = contactInfoRepository.save(contactInfo);
 
-        return new CreateContactInfoResponse(savedContactInfo.getId(),savedContactInfo.getGsmNumber(),savedContactInfo.getIdentityNumber(),savedContactInfo.getAddress(),savedContactInfo.getCity(),savedContactInfo.getCountry(),savedContactInfo.getCustomer().getId());
+        return new CreateContactInfoResponse(savedContactInfo.getId(),savedContactInfo.getGsmNumber(),savedContactInfo.getIdentityNumber(),savedContactInfo.getAddress(),savedContactInfo.getCity(),savedContactInfo.getCountry(), savedContactInfo.getZipCode(), savedContactInfo.getCustomer().getId());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         contactInfo.setCustomer(customerOptional.get());
         ContactInfo savedContactInfo = contactInfoRepository.save(contactInfo);
 
-        return new UpdateContactInfoResponse(savedContactInfo.getId(),savedContactInfo.getGsmNumber(),savedContactInfo.getIdentityNumber(),savedContactInfo.getAddress(),savedContactInfo.getCity(),savedContactInfo.getCountry(),savedContactInfo.getCustomer().getId());
+        return new UpdateContactInfoResponse(savedContactInfo.getId(),savedContactInfo.getGsmNumber(),savedContactInfo.getIdentityNumber(),savedContactInfo.getAddress(),savedContactInfo.getCity(),savedContactInfo.getCountry(),savedContactInfo.getZipCode(),savedContactInfo.getCustomer().getId());
     }
 
     @Override

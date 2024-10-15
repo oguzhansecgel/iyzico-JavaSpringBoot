@@ -23,7 +23,7 @@ public class CustomerController {
 
     // ID'ye göre müşteri getirme
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable int id) {
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
         Customer customer = customerService.getCustomerById(id);
         if (customer != null) {
             return ResponseEntity.ok(customer);
