@@ -58,4 +58,10 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+    @Override
+    public List<GetAllProductResponse> findByProductWithCategoryId(Long categoryId) {
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+        return ProductMapping.INSTANCE.listGetAllProduct(products);
+    }
 }

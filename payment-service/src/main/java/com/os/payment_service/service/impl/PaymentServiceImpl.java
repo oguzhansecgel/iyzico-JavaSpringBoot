@@ -27,6 +27,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public String makePayment(String orderId,PaymentRequest paymentRequest) {
+        Notification notification = new Notification();
         Order order = orderClient.getByIdOrder(orderId);
 
         Customer customer = customerClient.getByIdUser(order.getCustomer().getId());
@@ -67,10 +68,12 @@ public class PaymentServiceImpl implements PaymentService {
             basketItem.setCategory1(""+item.getProduct().getCategoryId());
             basketItem.setCategory2(""+item.getProduct().getCategoryId());
             basketItem.setItemType(BasketItemType.PHYSICAL.name());
-            basketItem.setPrice(item.getProduct().getPrice());
+            basketItem.setPrice(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
 
-            totalBasketPrice = totalBasketPrice.add(item.getProduct().getPrice());
+            totalBasketPrice = totalBasketPrice.add(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
             basketItems.add(basketItem);
+
+
         }
 
         request.setPrice(totalBasketPrice);

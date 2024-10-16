@@ -30,7 +30,7 @@ public class OrderController {
         return orderService.getByIdOrder(orderId);
     }
     @GetMapping("/getOrderHistoryForCustomer/{customerId}")
-    public Order getOrderHistoryForCustomer(@PathVariable Long customerId)
+    public List<Order> getOrderHistoryForCustomer(@PathVariable Long customerId)
     {
         return orderService.getOrderHistoryForCustomer(customerId);
     }

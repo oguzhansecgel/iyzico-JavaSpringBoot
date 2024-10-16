@@ -7,6 +7,7 @@ import com.os.product_service.dto.response.product.GetAllProductResponse;
 import com.os.product_service.dto.response.product.GetByIdProductResponse;
 import com.os.product_service.dto.response.product.UpdateProductResponse;
 import com.os.product_service.service.ProductService;
+import jakarta.ws.rs.Path;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +30,15 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    // Belirli bir ürünü ID ile alma
     @GetMapping("/getById/product/{id}")
     public Optional<GetByIdProductResponse> getProductById(@PathVariable Long id) {
        return productService.getProductById(id);
     }
-
-    // Ürün silme
+    @GetMapping("/products/category/{categoryId}")
+    public List<GetAllProductResponse> getAllProductWithCategory(@PathVariable Long categoryId)
+    {
+        return productService.findByProductWithCategoryId(categoryId);
+    }
     @DeleteMapping("/delete/product/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);

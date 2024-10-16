@@ -10,5 +10,5 @@ public interface OrderService {
     Order createOrder(String basketId);
     List<Order> getAllOrder();
     Optional<Order> getByIdOrder(String orderId);
-    Order getOrderHistoryForCustomer(Long customerId);
+    List<Order> getOrderHistoryForCustomer(Long customerId);
 }
