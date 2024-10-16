@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         User existingUser = userOptional.get();
         User user =  UserMapper.INSTANCE.updateUser(updateUserRequest, existingUser);
         User savedUser = userRepositories.save(user);
-        return new UpdateUserResponse(savedUser.getId(),savedUser.getPassword(), savedUser.getFirstName(),savedUser.getLastName());
+        return new UpdateUserResponse(savedUser.getId(),savedUser.getPassword(), savedUser.getPasswordRepeat(),savedUser.getFirstName(),savedUser.getLastName());
     }
 
     @Override

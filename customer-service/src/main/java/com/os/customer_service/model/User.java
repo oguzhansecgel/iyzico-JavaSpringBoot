@@ -27,6 +27,8 @@ public class User implements UserDetails {
     private Long id;
     @Column(name = "password")
     private String password;
+    @Column(name = "password_repeat")
+    private String passwordRepeat;
     @Column(name = "email")
     private String email;
     @Column(name = "name")

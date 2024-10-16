@@ -26,12 +26,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String makePayment(String orderId,Long customerId,PaymentRequest paymentRequest) {
+    public String makePayment(String orderId,PaymentRequest paymentRequest) {
         Order order = orderClient.getByIdOrder(orderId);
 
-        Customer customer = customerClient.getByIdUser(customerId);
+        Customer customer = customerClient.getByIdUser(order.getCustomer().getId());
         List<CustomerContactInfo> contactInfos = customerClient.getContactInfosByCustomerId(customer.getId());
 
+        if (contactInfos.size() == 0) {
+            throw new RuntimeException("Customer contact infos not found");
+        }
         CustomerContactInfo contactInfo = contactInfos.get(0);
 
         Buyer buyer = new Buyer();
@@ -39,46 +42,42 @@ public class PaymentServiceImpl implements PaymentService {
         buyer.setName(customer.getFirstName());
         buyer.setSurname(customer.getLastName());
         buyer.setGsmNumber(contactInfo.getGsmNumber());
-        buyer.setEmail("random@example.com");
+        buyer.setEmail(customer.getEmail());
         buyer.setIdentityNumber(contactInfo.getIdentityNumber());
         buyer.setRegistrationAddress(contactInfo.getAddress());
-        buyer.setIp("192.168.1.1");
+        buyer.setIp("192.168.1.1"); // İsteği yapan kullanıcının IP adresi
         buyer.setCity(contactInfo.getCity());
         buyer.setCountry(contactInfo.getCountry());
 
         Options options = new Options();
-        options.setApiKey("api-key");
-        options.setSecretKey("secret-key");
+        options.setApiKey("sandbox-0mR65beU1Z88KqioZFRWqcvVhUMqFKVm");
+        options.setSecretKey("sandbox-EvROmlLjkHdQE9N8tqvzX1hyr4Gdj74x");
         options.setBaseUrl("https://sandbox-api.iyzipay.com");
 
         CreatePaymentRequest request = new CreatePaymentRequest();
         request.setLocale(Locale.TR.getValue());
-        request.setConversationId(orderId); // Order ID
+        request.setConversationId(orderId);
 
-        // Sepet öğelerinin toplam fiyatını hesapla
         BigDecimal totalBasketPrice = BigDecimal.ZERO;
         List<BasketItem> basketItems = new ArrayList<>();
         for (OrderItem item : order.getItems()) {
             BasketItem basketItem = new BasketItem();
-            basketItem.setId("BI" + item.getProduct().getId()); // Unique ID
+            basketItem.setId("BI" + item.getProduct().getId());
             basketItem.setName(item.getProduct().getName());
-            basketItem.setCategory1("Random Category 1"); // Örnek kategori
-            basketItem.setCategory2("Random Category 2"); // Örnek kategori
+            basketItem.setCategory1(""+item.getProduct().getCategoryId());
+            basketItem.setCategory2(""+item.getProduct().getCategoryId());
             basketItem.setItemType(BasketItemType.PHYSICAL.name());
             basketItem.setPrice(item.getProduct().getPrice());
 
-            // Sepet toplam fiyatını artır
             totalBasketPrice = totalBasketPrice.add(item.getProduct().getPrice());
             basketItems.add(basketItem);
         }
 
-        // Sepet fiyatı ve ödenen fiyatı ayarla
-        request.setPrice(totalBasketPrice);  // Sepet öğelerinin toplam fiyatı
-        request.setPaidPrice(totalBasketPrice);  // Aynı şekilde ödenen fiyat
+        request.setPrice(totalBasketPrice);
+        request.setPaidPrice(totalBasketPrice);
         request.setCurrency(Currency.TRY.name());
         request.setInstallment(1);
 
-        // Kart bilgileri kullanıcıdan alınan PaymentRequest üzerinden ayarlanıyor
         PaymentCard paymentCard = new PaymentCard();
         paymentCard.setCardHolderName(paymentRequest.getCardHolderName());
         paymentCard.setCardNumber(paymentRequest.getCardNumber());
@@ -87,10 +86,8 @@ public class PaymentServiceImpl implements PaymentService {
         paymentCard.setCvc(paymentRequest.getCvc());
         request.setPaymentCard(paymentCard);
 
-        // Buyer'ı ödeme isteğine ekle
         request.setBuyer(buyer);
 
-        // ShippingAddress ve BillingAddress bilgileri
         Address shippingAddress = new Address();
         shippingAddress.setContactName(buyer.getName() + " " + buyer.getSurname());
         shippingAddress.setCity(buyer.getCity());
@@ -107,13 +104,10 @@ public class PaymentServiceImpl implements PaymentService {
         billingAddress.setZipCode("12345");
         request.setBillingAddress(billingAddress);
 
-        // BasketItems'ı ödeme isteğine ekle
         request.setBasketItems(basketItems);
 
-        // İyzico ödeme işlemi
         Payment result = Payment.create(request, options);
 
-        // Ödeme durumu
         if ("success".equals(result.getStatus())) {
             return "Payment successful for order ID: " + orderId;
         } else {
@@ -121,24 +115,5 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    @Override
-    public void order(String orderId) {
-        Order order = orderClient.getByIdOrder(orderId);
-        // Sipariş bilgilerini yazdır
-        System.out.println("Order ID: " + order.getId());
-       // System.out.println("Customer: " + order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName());
-        System.out.println("Total Price: " + order.getTotalPrice());
-        //System.out.println("Status: " + order.getStatus());
 
-        // Sipariş öğelerini yazdır
-        System.out.println("Order Items:");
-        for (OrderItem item : order.getItems()) {
-            System.out.println(" - Product ID: " + item.getProduct().getId());
-            System.out.println("   Product Name: " + item.getProduct().getName());
-            System.out.println("   Description: " + item.getProduct().getDescription());
-            System.out.println("   Price: " + item.getProduct().getPrice());
-            System.out.println("   Quantity: " + item.getQuantity());
-            System.out.println("   Total Price: " + item.getTotalPrice());
-        }
-    }
 }

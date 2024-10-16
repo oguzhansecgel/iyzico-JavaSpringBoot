@@ -3,6 +3,9 @@ package com.os.customer_service.service.impl;
 import com.os.customer_service.dto.request.user.LoginRequest;
 import com.os.customer_service.dto.request.user.RegisterRequest;
 import com.os.customer_service.dto.response.user.LoginResponse;
+import com.os.customer_service.exception.exceptionMessage.UserMessage;
+import com.os.customer_service.exception.type.PasswordNotMatchException;
+import com.os.customer_service.exception.type.WrongUsernameOrPassword;
 import com.os.customer_service.mapper.UserMapper;
 import com.os.customer_service.model.User;
 import com.os.customer_service.service.AuthService;
@@ -37,10 +40,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterRequest request) {
-
-        User user = UserMapper.INSTANCE.userFromRequest(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userService.add(user);
+        if(request.getPassword().equals(request.getPasswordRepeat()))
+        {
+            User user = UserMapper.INSTANCE.userFromRequest(request);
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userService.add(user);
+        }
+        else
+            throw new PasswordNotMatchException(UserMessage.PASSWORD_NOT_MATCH);
 
     }
 
@@ -53,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
             if (!authentication.isAuthenticated())
             {
-                throw new RuntimeException("UserMessage.WRONG_USER_NAME_PASSWORD");
+                throw new WrongUsernameOrPassword(UserMessage.WRONG_USER_NAME_PASSWORD);
             }
             UserDetails user = userService.loadUserByUsername(loginRequest.getEmail());
             Long userId = ((User) user).getId();
@@ -68,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
 
             return new LoginResponse(userId,token);
         } catch (BadCredentialsException e) {
-            throw new RuntimeException("UserMessage.WRONG_USER_NAME_PASSWORD");
+            throw new WrongUsernameOrPassword(UserMessage.WRONG_USER_NAME_PASSWORD);
         }
     }
 }

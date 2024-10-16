@@ -1,5 +1,6 @@
 package com.os.customer_service.exception;
 
+import com.os.customer_service.exception.type.WrongUsernameOrPassword;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -33,5 +34,11 @@ public class GlobalExceptionHandler {
         BusinessExceptionDetails businessExceptionDetails = new BusinessExceptionDetails();
         businessExceptionDetails.setTitle(exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(businessExceptionDetails);
+    }
+    @ExceptionHandler(WrongUsernameOrPassword.class)
+    public ResponseEntity<String> handleWrongUsernameOrPassword(WrongUsernameOrPassword ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ex.getMessage());
     }
 }

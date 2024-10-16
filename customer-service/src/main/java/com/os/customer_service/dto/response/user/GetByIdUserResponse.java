@@ -13,6 +13,7 @@ import lombok.Setter;
 public class GetByIdUserResponse {
     private int id;
     private String password;
+    private String passwordRepeat;
     private String email;
     private String firstName;
     private String lastName;

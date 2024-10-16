@@ -1,5 +1,6 @@
 package com.os.order_service.service;
 
+import com.os.order_service.model.CustomerDto;
 import com.os.order_service.model.Order;
 
 import java.util.List;
@@ -9,4 +10,5 @@ public interface OrderService {
     Order createOrder(String basketId);
     List<Order> getAllOrder();
     Optional<Order> getByIdOrder(String orderId);
+    Order getOrderHistoryForCustomer(Long customerId);
 }

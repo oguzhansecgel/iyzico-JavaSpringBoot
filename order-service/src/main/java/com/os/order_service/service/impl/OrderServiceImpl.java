@@ -49,4 +49,9 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.findById(orderId);
     }
+
+    @Override
+    public Order getOrderHistoryForCustomer(Long customerId) {
+        return orderRepository.findByCustomerId(customerId);
+    }
 }

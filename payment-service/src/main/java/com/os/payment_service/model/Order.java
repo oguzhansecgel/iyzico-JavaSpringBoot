@@ -18,5 +18,5 @@ public class Order {
     private String id;
     private List<OrderItem> items;
     private BigDecimal totalPrice;
-    private Long customerId;
+    private Customer customer;
 }

@@ -15,22 +15,15 @@ public class PaymentController {
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
-    @GetMapping("{orderId}")
-    public void order(@PathVariable("orderId") String orderId)
-    {
-        paymentService.order(orderId);
-    }
-    @PostMapping("/{orderId}/{customerId}")
+
+    @PostMapping("/{orderId}")
     public ResponseEntity<String> makePayment(
             @PathVariable String orderId,
-            @PathVariable Long customerId,
             @RequestBody PaymentRequest paymentRequest) {
         try {
-            // Ödeme işlemini gerçekleştir
-            String paymentResult = paymentService.makePayment(orderId,customerId, paymentRequest);
+            String paymentResult = paymentService.makePayment(orderId, paymentRequest);
             return new ResponseEntity<>(paymentResult, HttpStatus.OK);
         } catch (Exception e) {
-            // Hata durumunda uygun yanıtı döndür
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

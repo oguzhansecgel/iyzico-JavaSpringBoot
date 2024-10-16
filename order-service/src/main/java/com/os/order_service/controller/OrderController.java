@@ -1,5 +1,6 @@
 package com.os.order_service.controller;
 
+import com.os.order_service.model.CustomerDto;
 import com.os.order_service.model.Order;
 import com.os.order_service.service.OrderService;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,11 @@ public class OrderController {
     public Optional<Order> getByIdOrder(@PathVariable String orderId)
     {
         return orderService.getByIdOrder(orderId);
+    }
+    @GetMapping("/getOrderHistoryForCustomer/{customerId}")
+    public Order getOrderHistoryForCustomer(@PathVariable Long customerId)
+    {
+        return orderService.getOrderHistoryForCustomer(customerId);
     }
     @PostMapping("/create-order/{basketId}")
     public ResponseEntity<Order> createOrder(@PathVariable String basketId) {

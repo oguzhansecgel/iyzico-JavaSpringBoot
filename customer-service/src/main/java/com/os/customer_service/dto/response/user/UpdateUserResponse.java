@@ -12,6 +12,7 @@ import lombok.Setter;
 public class UpdateUserResponse {
     private Long id;
     private String password;
+    private String passwordRepeat;
     private String firstName;
     private String lastName;
 }
