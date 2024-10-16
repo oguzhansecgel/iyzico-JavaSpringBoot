@@ -15,12 +15,11 @@ public class NotificationProducer {
     }
 
 
-
-
     @Value("${spring.kafka.template.default-topic}")
     private String defaultTopic;
 
     public void sendMessage(Notification message) {
+        System.out.println("Sending message: " + message);
         kafkaTemplate.send(defaultTopic, message);
 
     }

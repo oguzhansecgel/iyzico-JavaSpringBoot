@@ -5,6 +5,7 @@ import com.iyzipay.model.*;
 import com.iyzipay.request.CreatePaymentRequest;
 import com.os.payment_service.client.CustomerClient;
 import com.os.payment_service.client.OrderClient;
+import com.os.payment_service.kafka.NotificationProducer;
 import com.os.payment_service.model.*;
 import com.os.payment_service.model.OrderItem;
 import com.os.payment_service.service.PaymentService;
@@ -19,18 +20,23 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final OrderClient orderClient;
     private final CustomerClient customerClient;
+    private final NotificationProducer notificationProducer;
 
-    public PaymentServiceImpl(OrderClient orderClient, CustomerClient customerClient) {
+    public PaymentServiceImpl(OrderClient orderClient, CustomerClient customerClient, NotificationProducer notificationProducer) {
         this.orderClient = orderClient;
         this.customerClient = customerClient;
+        this.notificationProducer = notificationProducer;
     }
 
     @Override
     public String makePayment(String orderId,PaymentRequest paymentRequest) {
         Notification notification = new Notification();
         Order order = orderClient.getByIdOrder(orderId);
-
         Customer customer = customerClient.getByIdUser(order.getCustomer().getId());
+        notification.setEmail(customer.getEmail());
+        notification.setFirstName(customer.getFirstName());
+        notification.setLastName(customer.getLastName());
+        notification.setTotalPrice(order.getTotalPrice());
         List<CustomerContactInfo> contactInfos = customerClient.getContactInfosByCustomerId(customer.getId());
 
         if (contactInfos.size() == 0) {
@@ -110,8 +116,20 @@ public class PaymentServiceImpl implements PaymentService {
         request.setBasketItems(basketItems);
 
         Payment result = Payment.create(request, options);
-
+        List<ProductNotification> products = new ArrayList<>();
+        for (OrderItem item : order.getItems()) {
+            ProductNotification productNotification = new ProductNotification();
+            productNotification.setId(item.getProduct().getId());
+            productNotification.setName(item.getProduct().getName());
+            productNotification.setDescription(item.getProduct().getDescription());
+            productNotification.setPrice(item.getProduct().getPrice());
+            productNotification.setQuantity(item.getQuantity());
+            products.add(productNotification);
+        }
+        notification.setProducts(products);
+        notificationProducer.sendMessage(notification);
         if ("success".equals(result.getStatus())) {
+
             return "Payment successful for order ID: " + orderId;
         } else {
             return "Payment failed: " + result.getErrorMessage();
