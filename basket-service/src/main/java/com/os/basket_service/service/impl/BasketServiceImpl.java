@@ -96,6 +96,17 @@ public class BasketServiceImpl implements BasketService {
     @Override
     public Optional<Basket> findByBasketId(String basketId) {
         Optional<Basket> basket = basketRepository.findById(basketId);
+        if (basket.isEmpty())
+            throw new RuntimeException("basket Not Found");
         return basket;
+    }
+
+    @Override
+    public void deleteBasket(String basketId) {
+        Optional<Basket> basket = basketRepository.findById(basketId);
+        if (basket.isEmpty())
+            throw new RuntimeException("basket Not Found");
+
+        basketRepository.deleteById(basketId);
     }
 }

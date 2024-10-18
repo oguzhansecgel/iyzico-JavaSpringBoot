@@ -3,6 +3,7 @@ package com.os.payment_service.service.impl;
 import com.iyzipay.Options;
 import com.iyzipay.model.*;
 import com.iyzipay.request.CreatePaymentRequest;
+import com.os.payment_service.client.BasketClient;
 import com.os.payment_service.client.CustomerClient;
 import com.os.payment_service.client.OrderClient;
 import com.os.payment_service.kafka.NotificationProducer;
@@ -20,11 +21,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final OrderClient orderClient;
     private final CustomerClient customerClient;
+    private final BasketClient basketClient;
     private final NotificationProducer notificationProducer;
 
-    public PaymentServiceImpl(OrderClient orderClient, CustomerClient customerClient, NotificationProducer notificationProducer) {
+    public PaymentServiceImpl(OrderClient orderClient, CustomerClient customerClient, BasketClient basketClient, NotificationProducer notificationProducer) {
         this.orderClient = orderClient;
         this.customerClient = customerClient;
+        this.basketClient = basketClient;
         this.notificationProducer = notificationProducer;
     }
 
@@ -32,6 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
     public String makePayment(String orderId,PaymentRequest paymentRequest) {
         Notification notification = new Notification();
         Order order = orderClient.getByIdOrder(orderId);
+        System.out.println(order.getBasketId());
         Customer customer = customerClient.getByIdUser(order.getCustomer().getId());
         notification.setEmail(customer.getEmail());
         notification.setFirstName(customer.getFirstName());
@@ -57,8 +61,8 @@ public class PaymentServiceImpl implements PaymentService {
         buyer.setCountry(contactInfo.getCountry());
 
         Options options = new Options();
-        options.setApiKey("sandbox-0mR65beU1Z88KqioZFRWqcvVhUMqFKVm");
-        options.setSecretKey("sandbox-EvROmlLjkHdQE9N8tqvzX1hyr4Gdj74x");
+        options.setApiKey("apikey");
+        options.setSecretKey("secretkey");
         options.setBaseUrl("https://sandbox-api.iyzipay.com");
 
         CreatePaymentRequest request = new CreatePaymentRequest();
@@ -129,7 +133,7 @@ public class PaymentServiceImpl implements PaymentService {
         notification.setProducts(products);
         notificationProducer.sendMessage(notification);
         if ("success".equals(result.getStatus())) {
-
+            basketClient.deleteBasketBeforeOrder(order.getBasketId());
             return "Payment successful for order ID: " + orderId;
         } else {
             return "Payment failed: " + result.getErrorMessage();

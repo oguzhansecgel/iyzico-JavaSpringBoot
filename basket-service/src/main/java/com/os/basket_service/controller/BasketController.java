@@ -40,4 +40,9 @@ public class BasketController {
         Basket basket = basketService.createBasketItem(customerId, productQuantities);
         return new ResponseEntity<>(basket, HttpStatus.CREATED);
     }
+    @DeleteMapping("/delete/basket/beforeOrder/{basketId}")
+    public void deleteBasketBeforeOrder(@PathVariable("basketId") String basketId)
+    {
+        basketService.deleteBasket(basketId);
+    }
 }

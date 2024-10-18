@@ -10,4 +10,5 @@ public interface BasketService {
     Basket productController(Long productId);
     Basket findByCustomersBasket(Long customerId);
     Optional<Basket> findByBasketId(String basketId);
+    void deleteBasket(String basketId);
 }

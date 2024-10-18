@@ -22,4 +22,5 @@ public class Order {
     private List<BasketItem> items;
     private BigDecimal totalPrice;
     private String status;
+    private String basketId;
 }

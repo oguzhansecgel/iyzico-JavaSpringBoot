@@ -1,11 +1,13 @@
 package com.os.product_service.service.impl;
 
 import com.os.product_service.dto.request.product.CreateProductRequest;
+import com.os.product_service.dto.request.product.DeleteProductRequest;
 import com.os.product_service.dto.request.product.UpdateProductRequest;
 import com.os.product_service.dto.response.product.CreateProductResponse;
 import com.os.product_service.dto.response.product.GetAllProductResponse;
 import com.os.product_service.dto.response.product.GetByIdProductResponse;
 import com.os.product_service.dto.response.product.UpdateProductResponse;
+import com.os.product_service.kafka.SearchServiceProducer;
 import com.os.product_service.mapper.ProductMapping;
 import com.os.product_service.model.Product;
 import com.os.product_service.repository.ProductRepository;
@@ -20,15 +22,18 @@ public class ProductServiceImpl implements ProductService {
 
 
     private final ProductRepository productRepository;
+    private final SearchServiceProducer searchServiceProducer;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, SearchServiceProducer searchServiceProducer) {
         this.productRepository = productRepository;
+        this.searchServiceProducer = searchServiceProducer;
     }
 
     @Override
     public CreateProductResponse addProduct(CreateProductRequest request) {
         Product product = ProductMapping.INSTANCE.createProduct(request);
         Product savedProduct = productRepository.save(product);
+        searchServiceProducer.sendMessage(new CreateProductResponse(savedProduct.getId(),savedProduct.getName(),savedProduct.getDescription(),savedProduct.getPrice(),savedProduct.getCategory().getId()));
         return new CreateProductResponse(savedProduct.getId(),savedProduct.getName(),savedProduct.getDescription(),savedProduct.getPrice(),savedProduct.getCategory().getId());
     }
 
@@ -39,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = product.get();
         Product updatedProduct = ProductMapping.INSTANCE.updateProduct(request, existingProduct);
         Product savedProduct =productRepository.save(updatedProduct);
+        searchServiceProducer.updateSendMessage(new UpdateProductResponse(savedProduct.getId(),savedProduct.getName(),savedProduct.getDescription(),savedProduct.getPrice(),savedProduct.getCategory().getId()));
         return new UpdateProductResponse(savedProduct.getId(),savedProduct.getName(),savedProduct.getDescription(),savedProduct.getPrice(),savedProduct.getCategory().getId());
     }
 
@@ -56,6 +62,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long id) {
+        DeleteProductRequest request = new DeleteProductRequest();
+        request.setId(id);
+        searchServiceProducer.deleteSendMessage(request);
         productRepository.deleteById(id);
     }
 

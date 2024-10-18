@@ -34,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
         order.setItems(basket.getItems());
         order.setTotalPrice(basket.getTotalPrice());
         order.setStatus("PENDING");
+        order.setBasketId(basketId);
 
         return orderRepository.save(order);
 

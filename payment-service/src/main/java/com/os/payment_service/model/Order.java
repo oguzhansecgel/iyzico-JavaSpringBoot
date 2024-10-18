@@ -19,4 +19,5 @@ public class Order {
     private List<OrderItem> items;
     private BigDecimal totalPrice;
     private Customer customer;
+    private String basketId;
 }
