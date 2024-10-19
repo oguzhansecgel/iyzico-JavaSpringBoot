@@ -56,5 +56,15 @@ public class ProductElasticSearchServiceImpl implements ProductElasticSearchServ
         return productElasticSearchRepository.save(existingProduct);
     }
 
+    @Override
+    public List<Product> findAllByProductByPriceAsc() {
+        return productElasticSearchRepository.findAllByOrderByPriceAsc();
+    }
+
+    @Override
+    public List<Product> findAllByProductByPriceDesc() {
+        return productElasticSearchRepository.findAllByOrderByPriceDesc();
+    }
+
 
 }

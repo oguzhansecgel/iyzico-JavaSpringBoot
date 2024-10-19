@@ -26,9 +26,7 @@ public class SearchServiceProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaAddress;
 
-    // ürün oluşturmak için
-    @Bean
-    public ProducerFactory<String, CreateProductResponse> createProductProducerFactory() {
+    private <T> ProducerFactory<String, T> producerFactory(Class<T> valueType) {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -38,38 +36,17 @@ public class SearchServiceProducerConfig {
 
     @Bean
     public KafkaTemplate<String, CreateProductResponse> createProductKafkaTemplate() {
-        return new KafkaTemplate<>(createProductProducerFactory());
-    }
-
-    // ürün silmek için
-    @Bean
-    public ProducerFactory<String, DeleteProductRequest> deleteProductProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
+        return new KafkaTemplate<>(producerFactory(CreateProductResponse.class));
     }
 
     @Bean
     public KafkaTemplate<String, DeleteProductRequest> deleteProductKafkaTemplate() {
-        return new KafkaTemplate<>(deleteProductProducerFactory());
-    }
-
-    // ürün güncellemesi için
-
-    @Bean
-    public ProducerFactory<String, UpdateProductResponse> updateProductProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
+        return new KafkaTemplate<>(producerFactory(DeleteProductRequest.class));
     }
 
     @Bean
     public KafkaTemplate<String, UpdateProductResponse> updateProductKafkaTemplate() {
-        return new KafkaTemplate<>(updateProductProducerFactory());
+        return new KafkaTemplate<>(producerFactory(UpdateProductResponse.class));
     }
 
 

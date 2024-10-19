@@ -31,6 +31,16 @@ public class ProductElasticSearchController {
     {
         return productElasticSearchService.findByProductPriceBetween(lowPrice, highPrice);
     }
+    @GetMapping("/findBy/productPriceAsc")
+    public List<Product> findAllByProductByPriceAsc()
+    {
+        return productElasticSearchService.findAllByProductByPriceAsc();
+    }
+    @GetMapping("/findBy/productPriceDesc")
+    public List<Product> findAllByProductByPriceDesc()
+    {
+        return productElasticSearchService.findAllByProductByPriceDesc();
+    }
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id)
     {

@@ -11,6 +11,8 @@ import com.os.product_service.mapper.CategoryMapping;
 import com.os.product_service.model.Category;
 import com.os.product_service.repository.CategoryRepository;
 import com.os.product_service.service.CategoryService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "category",key = "'getAll'")
     public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
         Category category = CategoryMapping.INSTANCE.createCategory(request);
         Category savedCategory = categoryRepository.save(category);
@@ -34,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "category",key = "'getAll'")
     public UpdateCategoryResponse updateCategory(Long id, UpdateCategoryRequest request) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         //if (category.isEmpty()) {}
@@ -44,18 +48,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(value = "category",key = "'getAll'")
     public List<GetAllCategoryResponse> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return CategoryMapping.INSTANCE.listToGetAllCategory(categories);
     }
 
     @Override
+    @Cacheable(value = "category",key = "#id")
     public Optional<GetByIdCategoryResponse> getCategory(Long id) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         return optionalCategory.map(CategoryMapping.INSTANCE::getByIdCategory);
     }
 
     @Override
+    @CacheEvict(value = "category",key = "#id",allEntries = true)
     public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);
     }

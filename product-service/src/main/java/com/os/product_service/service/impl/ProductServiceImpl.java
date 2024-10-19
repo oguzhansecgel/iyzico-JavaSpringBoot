@@ -12,6 +12,8 @@ import com.os.product_service.mapper.ProductMapping;
 import com.os.product_service.model.Product;
 import com.os.product_service.repository.ProductRepository;
 import com.os.product_service.service.ProductService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", key = "'allProducts'")
     public CreateProductResponse addProduct(CreateProductRequest request) {
         Product product = ProductMapping.INSTANCE.createProduct(request);
         Product savedProduct = productRepository.save(product);
@@ -38,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", key = "'allProducts'")
     public UpdateProductResponse updateProduct(Long id, UpdateProductRequest request) {
         Optional<Product> product = productRepository.findById(id);
         // if (product.isEmpty()) {}  exception tanımlaması yapılacak
@@ -49,18 +53,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "'allProducts'")
     public List<GetAllProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
         return ProductMapping.INSTANCE.listGetAllProduct(products);
     }
 
     @Override
+    @Cacheable(value = "products", key = "#id")
     public Optional<GetByIdProductResponse> getProductById(Long id) {
         Optional<Product> product = productRepository.findById(id);
         return product.map(ProductMapping.INSTANCE::getByIdProduct);
     }
 
     @Override
+    @CacheEvict(value = "products", key = "#id",allEntries = true)
     public void deleteProduct(Long id) {
         DeleteProductRequest request = new DeleteProductRequest();
         request.setId(id);
@@ -69,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", key = "#categoryId",allEntries = true)
     public List<GetAllProductResponse> findByProductWithCategoryId(Long categoryId) {
         List<Product> products = productRepository.findByCategoryId(categoryId);
         return ProductMapping.INSTANCE.listGetAllProduct(products);

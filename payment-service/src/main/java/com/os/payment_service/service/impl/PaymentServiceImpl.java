@@ -61,8 +61,8 @@ public class PaymentServiceImpl implements PaymentService {
         buyer.setCountry(contactInfo.getCountry());
 
         Options options = new Options();
-        options.setApiKey("apikey");
-        options.setSecretKey("secretkey");
+        options.setApiKey("api-key");
+        options.setSecretKey("secret-key");
         options.setBaseUrl("https://sandbox-api.iyzipay.com");
 
         CreatePaymentRequest request = new CreatePaymentRequest();

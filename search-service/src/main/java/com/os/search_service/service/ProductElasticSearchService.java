@@ -12,4 +12,6 @@ public interface ProductElasticSearchService {
     List<Product> findByProductPriceBetween(BigDecimal low, BigDecimal high);
     void deleteProduct(String id);
     Product updateProduct(Product product);
+    List<Product> findAllByProductByPriceAsc();
+    List<Product> findAllByProductByPriceDesc();
 }

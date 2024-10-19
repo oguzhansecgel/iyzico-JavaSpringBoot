@@ -16,4 +16,6 @@ public interface ProductElasticSearchRepository extends ElasticsearchRepository<
 
     List<Product> findByPriceBetween(BigDecimal lower, BigDecimal upper);
 
+    List<Product> findAllByOrderByPriceAsc();
+    List<Product> findAllByOrderByPriceDesc();
 }

@@ -92,4 +92,6 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(updateProductConsumerFactory());
         return factory;
     }
+
+
 }
