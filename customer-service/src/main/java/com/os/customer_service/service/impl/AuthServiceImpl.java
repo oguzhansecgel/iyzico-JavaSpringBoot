@@ -11,6 +11,7 @@ import com.os.customer_service.model.User;
 import com.os.customer_service.service.AuthService;
 import com.os.customer_service.service.UserService;
 import com.turkcell.tcell.core.security.BaseJwtService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,12 +31,14 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final BaseJwtService baseJwtService;
+    private final HttpSession httpSession;
 
-    public AuthServiceImpl(PasswordEncoder passwordEncoder, UserService userService, AuthenticationManager authenticationManager, BaseJwtService baseJwtService) {
+    public AuthServiceImpl(PasswordEncoder passwordEncoder, UserService userService, AuthenticationManager authenticationManager, BaseJwtService baseJwtService, HttpSession httpSession) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.baseJwtService = baseJwtService;
+        this.httpSession = httpSession;
     }
 
     @Override
@@ -72,7 +75,6 @@ public class AuthServiceImpl implements AuthService {
             claims.put("roles", roles);
             claims.put("userId", userId);
             String token = baseJwtService.generateToken(loginRequest.getEmail(), claims);
-
             return new LoginResponse(userId,token);
         } catch (BadCredentialsException e) {
             throw new WrongUsernameOrPassword(UserMessage.WRONG_USER_NAME_PASSWORD);

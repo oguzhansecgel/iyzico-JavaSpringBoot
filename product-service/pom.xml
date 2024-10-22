@@ -55,10 +55,15 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.iyzipay</groupId>
-			<artifactId>iyzipay-java</artifactId>
-			<version>2.0.127</version>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

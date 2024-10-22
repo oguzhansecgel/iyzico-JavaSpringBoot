@@ -6,11 +6,12 @@ import com.os.product_service.dto.response.category.CreateCategoryResponse;
 import com.os.product_service.dto.response.category.GetAllCategoryResponse;
 import com.os.product_service.dto.response.category.GetByIdCategoryResponse;
 import com.os.product_service.dto.response.category.UpdateCategoryResponse;
-import com.os.product_service.dto.response.product.GetByIdProductResponse;
+import com.os.product_service.exception.type.CategoryNotFoundException;
 import com.os.product_service.mapper.CategoryMapping;
 import com.os.product_service.model.Category;
 import com.os.product_service.repository.CategoryRepository;
 import com.os.product_service.service.CategoryService;
+import com.os.product_service.utils.message.CategoryMessage;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,10 @@ public class CategoryServiceImpl implements CategoryService {
     @CacheEvict(value = "category",key = "'getAll'")
     public UpdateCategoryResponse updateCategory(Long id, UpdateCategoryRequest request) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
-        //if (category.isEmpty()) {}
+        if (optionalCategory.isEmpty())
+        {
+            throw new CategoryNotFoundException(CategoryMessage.CATEGORY_NOT_FOUND);
+        }
         Category categoryExisting = optionalCategory.get();
         Category category = CategoryMapping.INSTANCE.updateCategory(request,categoryExisting);
         Category savedCategory = categoryRepository.save(category);
@@ -58,12 +62,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Cacheable(value = "category",key = "#id")
     public Optional<GetByIdCategoryResponse> getCategory(Long id) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isEmpty())
+        {
+            throw new CategoryNotFoundException(CategoryMessage.CATEGORY_NOT_FOUND);
+        }
         return optionalCategory.map(CategoryMapping.INSTANCE::getByIdCategory);
     }
 
     @Override
     @CacheEvict(value = "category",key = "#id",allEntries = true)
     public void deleteCategory(Long id) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isEmpty())
+        {
+            throw new CategoryNotFoundException(CategoryMessage.CATEGORY_NOT_FOUND);
+        }
         categoryRepository.deleteById(id);
     }
+
+
 }
