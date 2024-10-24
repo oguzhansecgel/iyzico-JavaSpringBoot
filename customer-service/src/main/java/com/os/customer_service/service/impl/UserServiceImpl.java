@@ -61,6 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUser(Long id) {
+        userRepositories.deleteById(id);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepositories.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found with email or password "));

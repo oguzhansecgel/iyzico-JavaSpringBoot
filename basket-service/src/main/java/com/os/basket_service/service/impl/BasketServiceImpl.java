@@ -8,6 +8,10 @@ import com.os.basket_service.model.CustomerDto;
 import com.os.basket_service.model.ProductDto;
 import com.os.basket_service.repository.BasketRepository;
 import com.os.basket_service.service.BasketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,6 +26,7 @@ public class BasketServiceImpl implements BasketService {
     private final BasketRepository basketRepository;
     private final ProductClient productClient;
     private final CustomerClient customerClient;
+    private static final Logger logger = LoggerFactory.getLogger(BasketService.class);
 
     public BasketServiceImpl(BasketRepository basketRepository, ProductClient productClient, CustomerClient customerClient) {
         this.basketRepository = basketRepository;
@@ -30,6 +35,7 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
+    @CacheEvict(value = "basket",key = "'getAll'")
     public Basket createBasketItem(Long customerId, Map<Long, Integer> productQuantities) {
         Optional<CustomerDto> optionalCustomer = customerClient.getByIdUser(customerId);
         if (optionalCustomer.isEmpty()) {
@@ -86,6 +92,7 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
+    @Cacheable(value = "basket",key = "'#customerId'")
     public Basket findByCustomersBasket(Long customerId) {
         Optional<CustomerDto> customerIdExisting = customerClient.getByIdUser(customerId);
         if (customerIdExisting.isEmpty())
@@ -94,14 +101,17 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
+    @Cacheable(value = "basket",key = "#basketId")
     public Optional<Basket> findByBasketId(String basketId) {
         Optional<Basket> basket = basketRepository.findById(basketId);
+        logger.info("metot çalıştı.");
         if (basket.isEmpty())
             throw new RuntimeException("basket Not Found");
         return basket;
     }
 
     @Override
+    @CacheEvict(value = "basket",key = "#basketId",allEntries = true)
     public void deleteBasket(String basketId) {
         Optional<Basket> basket = basketRepository.findById(basketId);
         if (basket.isEmpty())

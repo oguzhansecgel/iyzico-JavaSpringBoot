@@ -6,10 +6,12 @@ import com.iyzipay.request.CreatePaymentRequest;
 import com.os.payment_service.client.BasketClient;
 import com.os.payment_service.client.CustomerClient;
 import com.os.payment_service.client.OrderClient;
+import com.os.payment_service.exception.type.ContactInfosNotFoundException;
 import com.os.payment_service.kafka.NotificationProducer;
 import com.os.payment_service.model.*;
 import com.os.payment_service.model.OrderItem;
 import com.os.payment_service.service.PaymentService;
+import com.os.payment_service.utils.message.ContactInfosMessage;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -35,7 +37,6 @@ public class PaymentServiceImpl implements PaymentService {
     public String makePayment(String orderId,PaymentRequest paymentRequest) {
         Notification notification = new Notification();
         Order order = orderClient.getByIdOrder(orderId);
-        System.out.println(order.getBasketId());
         Customer customer = customerClient.getByIdUser(order.getCustomer().getId());
         notification.setEmail(customer.getEmail());
         notification.setFirstName(customer.getFirstName());
@@ -44,7 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<CustomerContactInfo> contactInfos = customerClient.getContactInfosByCustomerId(customer.getId());
 
         if (contactInfos.size() == 0) {
-            throw new RuntimeException("Customer contact infos not found");
+            throw new ContactInfosNotFoundException(ContactInfosMessage.CONTACT_INFOS_NOT_FOUND);
         }
         CustomerContactInfo contactInfo = contactInfos.get(0);
 
@@ -61,8 +62,8 @@ public class PaymentServiceImpl implements PaymentService {
         buyer.setCountry(contactInfo.getCountry());
 
         Options options = new Options();
-        options.setApiKey("api-key");
-        options.setSecretKey("secret-key");
+        options.setApiKey("apikey");
+        options.setSecretKey("secretkey");
         options.setBaseUrl("https://sandbox-api.iyzipay.com");
 
         CreatePaymentRequest request = new CreatePaymentRequest();

@@ -17,4 +17,5 @@ public interface UserService extends UserDetailsService {
     Optional<User> getUserByIdForRole(Long id);
     List<UserResponse> getAllUser();
     UpdateUserResponse updateUser(UpdateUserRequest updateUserRequest,Long id);
+    void deleteUser(Long id);
 }

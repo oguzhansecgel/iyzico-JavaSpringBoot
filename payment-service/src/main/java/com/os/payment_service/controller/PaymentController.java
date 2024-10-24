@@ -1,6 +1,5 @@
 package com.os.payment_service.controller;
 
-import com.os.payment_service.model.Order;
 import com.os.payment_service.model.PaymentRequest;
 import com.os.payment_service.service.PaymentService;
 import org.springframework.http.HttpStatus;
