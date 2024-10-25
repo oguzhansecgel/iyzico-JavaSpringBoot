@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest,HttpSession session) {
 
         try {
             Authentication authentication = authenticationManager
@@ -86,9 +86,12 @@ public class AuthServiceImpl implements AuthService {
             claims.put("roles", roles);
             claims.put("userId", userId);
             String token = baseJwtService.generateToken(loginRequest.getEmail(), claims);
+            session.setAttribute("userId",userId);
+            session.setAttribute("token",token);
             return new LoginResponse(userId,token);
         } catch (BadCredentialsException e) {
             throw new WrongUsernameOrPassword(UserMessage.WRONG_USER_NAME_PASSWORD);
         }
     }
+
 }

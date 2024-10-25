@@ -8,6 +8,7 @@ import com.os.basket_service.model.CustomerDto;
 import com.os.basket_service.model.ProductDto;
 import com.os.basket_service.repository.BasketRepository;
 import com.os.basket_service.service.BasketService;
+import com.os.spring_security.security.BaseJwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,11 +28,13 @@ public class BasketServiceImpl implements BasketService {
     private final ProductClient productClient;
     private final CustomerClient customerClient;
     private static final Logger logger = LoggerFactory.getLogger(BasketService.class);
+    private final BaseJwtService jwtService;
 
-    public BasketServiceImpl(BasketRepository basketRepository, ProductClient productClient, CustomerClient customerClient) {
+    public BasketServiceImpl(BasketRepository basketRepository, ProductClient productClient, CustomerClient customerClient, BaseJwtService jwtService) {
         this.basketRepository = basketRepository;
         this.productClient = productClient;
         this.customerClient = customerClient;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -119,4 +122,8 @@ public class BasketServiceImpl implements BasketService {
 
         basketRepository.deleteById(basketId);
     }
+
+
+
+
 }

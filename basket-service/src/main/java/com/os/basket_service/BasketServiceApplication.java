@@ -1,6 +1,6 @@
 package com.os.basket_service;
 
-import com.turkcell.tcell.core.annotations.EnableSecurity;
+import com.os.spring_security.annotations.EnableSecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;

@@ -1,6 +1,5 @@
 package com.os.basket_service.config;
-
-import com.turkcell.tcell.core.security.BaseSecurityService;
+import com.os.spring_security.security.BaseSecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -4,11 +4,9 @@ import com.os.customer_service.dto.request.user.LoginRequest;
 import com.os.customer_service.dto.request.user.RegisterRequest;
 import com.os.customer_service.dto.response.user.LoginResponse;
 import com.os.customer_service.service.AuthService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -28,8 +26,9 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public LoginResponse login(@RequestBody LoginRequest request)
+    public LoginResponse login(@RequestBody LoginRequest request, HttpSession session)
     {
-        return authService.login(request);
+        return authService.login(request,session);
     }
+
 }
