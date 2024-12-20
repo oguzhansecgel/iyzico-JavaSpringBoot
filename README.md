@@ -1,6 +1,6 @@
 # E-Ticaret Uygulaması
 
-#### Bu proje, küçük bir e-ticaret sitesi gibi işlev gören bir sistemdir. Kullanıcılar ürün sipariş verebilir, ödeme işlemleri yapılabilir ve sipariş onaylandığında kullanıcıya e-posta ile bildirim gönderilir. Projenin temel amacı, **Iyzico ödeme entegrasyonunu** başarıyla sağlamaktır.
+#### Bu proje, küçük bir e-ticaret sitesi gibi işlev gören bir sistemdir. Kullanıcılar ürün sipariş verebilir, ödeme işlemleri yapılabilir ve sipariş onaylandığında kullanıcıya e-posta ile bildirim gönderilir. Projenin temel amacı, **Iyzico ödeme entegrasyonunu** başarıyla sağlamaktır..
 
 ## Genel Senaryo
 - Müşteriler sisteme kayıt olur ve giriş yaparlar.
